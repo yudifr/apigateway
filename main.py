@@ -1,8 +1,4 @@
-from typing import Optional
-
 from fastapi import FastAPI
-from fastapi import APIRouter
-
 import json
 from routers import institusiRouter,alumniRouter
 

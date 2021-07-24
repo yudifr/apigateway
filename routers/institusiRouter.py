@@ -10,19 +10,19 @@ URL = 'http://localhost:'
 @router.get('/', name="Get Institution")
 def getInstitution():
     response = requests.get(URL+PORT+'/institution/',headers={
-        'api-access':'yes',
+        'app-origins':"yes",
         'Content-Type':'application/json',
     })
-    return {'data' : json.loads(response.text),'status_code' :response.status_code}
+    return {'data' : json.loads(response.text)}
 
 
 @router.get('/{institution_id}', name="Get Institution",summary="showing institution by id",description="showing institution data by id")
 def getInstitutionbyId(institution_id : str):
     response = requests.get(URL+PORT+'/institution/'+institution_id,headers={
-        'api-access':'yes',
+        'app-origins':"yes",
         'Content-Type':'application/json',
     })
-    return {'message' : json.loads(response.text),'status_code' :response.status_code}
+    return {'message' : json.loads(response.text)}
 
 
 
@@ -45,12 +45,12 @@ async def newInstitution(request: Request):
     }
     
     response =  requests.post(URL+PORT+'/institution/', data=json.dumps(formdata),headers={
-        'api-access':'yes',
+        'app-origins':"yes",
         'content-type':'application/json'
     }
     
     )
-    return {'message' : json.loads(response.text),'status_code' :response.status_code}
+    return {'message' : json.loads(response.text)}
     
     
 @router.put('/{id}',name='update institution',summary='update institution data')
@@ -71,7 +71,7 @@ async def updateInstitution(id : str,request: Request):
         'email_prodi':form['email_prodi'],
     }
     response = requests.put(URL+PORT+'/institution/'+id,data=json.dumps(formdata),headers={
-        'api-access':'yes',
+        'app-origins':"yes",
         'Content-Type':'application/json',
     })
     return response.json()
@@ -79,7 +79,7 @@ async def updateInstitution(id : str,request: Request):
 @router.delete('/{id}',name="delete institution",summary='soft delete institution data')
 async def deleteInstitution(id: str, request:Request):
     response = requests.delete(URL+PORT+'/institution/'+id,headers={
-        'api-access':'yes',
+        'app-origins':"yes",
         'Content-Type':'application/json',
     })
-    return {'message' : json.loads(response.text),'status_code' :response.status_code}
+    return {'message' : json.loads(response.text)}
