@@ -11,7 +11,7 @@ URL = 'http://localhost:'
 @router.get('/', name="Get Alumni")
 def getAlumni():
     response = requests.get(URL+PORT+'/',headers={
-        'api-access':'yes',
+        'app-origins':'yes',
         'Content-Type':'application/json',
     })
     return response.text
