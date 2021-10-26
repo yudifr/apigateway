@@ -5,7 +5,7 @@ import requests
 import json
 router = APIRouter()
 PORT = '8001'
-URL = 'http://localhost:'
+URL = 'http://192.168.100.22:'
 
 @router.get('/', name="Get Institution")
 def getInstitution():
@@ -22,7 +22,7 @@ def getInstitutionbyId(institution_id : str):
         'app-origins':"yes",
         'Content-Type':'application/json',
     })
-    return {'message' : json.loads(response.text)}
+    return {'data' : json.loads(response.text)}
 
 
 
@@ -36,12 +36,11 @@ async def newInstitution(request: Request):
         'alamat':form['alamat'],
         'kab_kota':form['kab_kota'],
         'provinsi':form['provinsi'],
-        'email':form['email'],
         'no_telp':form['no_telp'],
-        'nama_fakultas':form['nama_fakultas'],
-        'email_fakultas':form['email_fakultas'],
-        'nama_prodi':form['nama_prodi'],
-        'email_prodi':form['email_prodi'],
+        # 'nama_fakultas':form['nama_fakultas'],
+        # 'email_fakultas':form['email_fakultas'],
+        # 'nama_prodi':form['nama_prodi'],
+        # 'email_prodi':form['email_prodi'],
     }
     
     response =  requests.post(URL+PORT+'/institution/', data=json.dumps(formdata),headers={
@@ -50,7 +49,7 @@ async def newInstitution(request: Request):
     }
     
     )
-    return {'message' : json.loads(response.text)}
+    return {'data' : json.loads(response.text)}
     
     
 @router.put('/{id}',name='update institution',summary='update institution data')
