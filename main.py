@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import json
-from routers import institusiRouter,alumniRouter,consumerRouter,tracerRouter
+from routers import institusiRouter,alumniRouter,consumerRouter,tracerRouter,authRouter
 
 
 app = FastAPI()
@@ -16,6 +16,11 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+app.include_router(
+    authRouter.router,
+    prefix="/auth",
+    tags=["auth"],
 )
 app.include_router(
     institusiRouter.router,
@@ -43,4 +48,4 @@ def read_root():
 
 # uvicorn main:app --reload --port 8000
 # php -S localhost:8001 -t public 
-    
+# pip install fastapi requests  python-multipart

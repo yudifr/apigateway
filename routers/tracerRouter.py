@@ -25,7 +25,7 @@ def getKuisionerConsumer(id : str):
 
 
 @router.post('/kuisioner/alumni',name='Post tracer')
-async def newInstitution(request: Request):
+async def newAlumniKuisioner(request: Request):
     
     formData = await request.json()
     # print ( json.dumps(await request.json()))
