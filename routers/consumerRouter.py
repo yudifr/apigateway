@@ -6,6 +6,7 @@ import json
 router = APIRouter()
 PORT = '8003'
 URL = 'http://localhost:'
+ALUMNI_PORT = '8002'
 
 
 @router.get('/', name="Get Consumer")
@@ -14,7 +15,7 @@ def getConsumer():
         'app-origins': "yes",
         'Content-Type': 'application/json',
     })
-    return {'data': json.loads(response.text)}
+    return response.json()
 
 
 @router.get('/name/{consumer_name}', name="Get Consumer")
@@ -23,7 +24,7 @@ def getConsumer(consumer_name: str):
         'app-origins': "yes",
         'Content-Type': 'application/json',
     })
-    return {'data': json.loads(response.text)}
+    return response.json()
 
 
 @router.get('/{consumer_id}', name="Get Consumer", summary="showing Consumer by id", description="showing Consumer data by id")
@@ -32,7 +33,16 @@ def getConsumerbyId(consumer_id: str):
         'app-origins': "yes",
         'Content-Type': 'application/json',
     })
-    return {'data': json.loads(response.text)}
+    return response.json()
+
+
+@router.get('/worker/{consumer_id}', name="Get data  alumni", summary="showing  alumni by consumer_id", description="showing  alumni data by consumer_id")
+def getAlumni(consumer_id: str):
+    response = requests.get(URL+ALUMNI_PORT+'/alumni/worker/'+consumer_id, headers={
+        'app-origins': "yes",
+        'Content-Type': 'application/json',
+    })
+    return response.json()
 
 
 @router.post('/', name='Post Consumer')
@@ -55,7 +65,7 @@ async def newConsumer(request: Request):
     }
 
     )
-    return {'message': json.loads(response.text)}
+    return response.json()
 
 
 @router.put('/{id}', name='update Consumer', summary='update Consumer data')
@@ -84,4 +94,4 @@ async def deleteConsumer(id: str, request: Request):
         'app-origins': "yes",
         'Content-Type': 'application/json',
     })
-    return {'message': json.loads(response.text)}
+    return response.json()
