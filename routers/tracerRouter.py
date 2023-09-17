@@ -85,7 +85,7 @@ def getConsumerKuisionerByInstitution(institutionId: str, institutionType: str):
 
 @router.post('/kuisioner/alumni', name='Post tracer')
 async def newAlumniKuisioner(request: Request):
-    form = await request.form()
+    form = await request.json()
     formData = {
         'id_alumni': form.get('id_alumni'),
         'pindah': form.get('pindah'),
@@ -116,7 +116,7 @@ async def newAlumniKuisioner(request: Request):
 
 @router.put('/kuisioner/alumni/{id}', name='Post tracer')
 async def updateAlumniKuisioner(request: Request, id: str):
-    form = await request.form()
+    form = await request.json()
     formData = {
         'pindah': form.get('pindah'),
         'alasan_pindah': form.get('alasan_pindah'),
@@ -146,7 +146,7 @@ async def updateAlumniKuisioner(request: Request, id: str):
 
 @router.post('/kuisioner/consumer', name='Post tracer consumer')
 async def newConsumerKuisioner(request: Request):
-    form = await request.form()
+    form = await request.json()
     formData = {
         'id_consumer': form.get('id_consumer'),
         'saran_prodi': form.get('saran_prodi'),
@@ -167,7 +167,7 @@ async def newConsumerKuisioner(request: Request):
 
 @router.put('/kuisioner/consumer/{id}', name='Post tracer')
 async def updateConsumerKuisioner(request: Request, id: str):
-    form = await request.form()
+    form = await request.json()
     formData = {
         'saran_prodi': form.get('saran_prodi'),
         'saran_fasilitas': form.get('saran_fasilitas'),

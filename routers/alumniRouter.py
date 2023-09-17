@@ -29,7 +29,7 @@ def getAlumni(id: str):
 
 @router.post('/riwayat', name="Post new work history")
 async def postWorkHistory(request: Request):
-    form = await request.form()
+    form = await request.json()
     formData = {
         'is_active': form.get('is_active', 'false'),
         'id_alumni': form.get('id_alumni'),

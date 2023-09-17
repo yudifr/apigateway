@@ -53,7 +53,7 @@ def getInstitutionbyId(institution_id: str):
 
 @router.post('/', name='Post institution')
 async def newInstitution(request: Request):
-    form = await request.form()
+    form = await request.json()
     formdata = {
         'kode_sekolah': form.get('kode_sekolah'),
         'nama': form.get('nama'),
@@ -83,7 +83,7 @@ async def newInstitution(request: Request):
 
 @router.post('/', name='Post Faculty')
 async def newFaculty(request: Request):
-    form = await request.form()
+    form = await request.json()
     formdata = {
         'id_institusi': form.get('id_institusi'),
         'nama_fakultas': form.get('nama_fakultas'),
@@ -101,7 +101,7 @@ async def newFaculty(request: Request):
 
 @router.post('/', name='Post Major')
 async def newMajor(request: Request):
-    form = await request.form()
+    form = await request.json()
     formdata = {
         'id_institusi': form.get('id_institusi'),
         'id_fakultas': form.get('id_fakultas'),
@@ -120,7 +120,7 @@ async def newMajor(request: Request):
 
 @router.put('/{id}', name='update institution', summary='update institution data')
 async def updateInstitution(id: str, request: Request):
-    form = await request.form()
+    form = await request.json()
     formdata = {
         'kode_sekolah': form.get('kode_sekolah'),
         'nama': form.get('nama'),

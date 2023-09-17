@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, Request
+from fastapi import FastAPI, APIRouter, Request, HTTPException
 
 import requests
 
@@ -13,7 +13,7 @@ CONSUMER_PORT = '8003'
 
 @router.post('/logout', name="Logout")
 async def logout(request: Request):
-    form = await request.form()
+    form = await request.json()
     formData = {
         'username': form.get('username'),
     }
@@ -26,7 +26,7 @@ async def logout(request: Request):
 
 @router.post('/ping', name="ping")
 async def ping(request: Request):
-    form = await request.form()
+    form = await request.json()
     formData = {
         'username': form.get('username'),
         'cache': form.get('cache'),
@@ -41,23 +41,36 @@ async def ping(request: Request):
 @router.post('/register', name='Register')
 async def register(request: Request):
     # try:
-    form = await request.form()
+    form = await request.json()
     formData = {
         'username': form.get('username'),
-        'is_active': form.get('is_active', 'false'),
+        'password': form.get('password'),
+        'email': form.get('email'),
+        'no_telp': form.get('no_telp'),
+        'cache_key': form.get('cache_key'),
         'type': form.get('type'),
     }
+    print(form)
     response = requests.post(URL+PORT+'/auth/register', data=json.dumps(formData), headers={
         'app-origins': "yes",
         'content-type': 'application/json'
     })
     responseValue = json.loads(response.text)
     if responseValue.get('statusCode') == 400:
-        return {'message': 'user already exist', 'status': 'error'}
+        print(responseValue)
+        raise HTTPException(
+            status_code=400,
+            detail="User Already Exist",
+            headers={"X-Error": "There goes my error"},
+        )
     else:
         # alumni tested
         if form.get('type') == '1':
             alumniData = {
+                'motherName': form.get('motherName'),
+                'fatherName': form.get('fatherName'),
+                'address': form.get('address'),
+                'nama': form.get('nama'),
                 'idPelajar': form.get('idPelajar'),
                 'lulusanSd': form.get('lulusanSd'),
                 'tahunSd': form.get('tahunSd'),
@@ -266,11 +279,9 @@ async def register(request: Request):
                 'alamat': form.get('alamat'),
                 'kab_kota': form.get('kab_kota'),
                 'provinsi': form.get('provinsi'),
-                'no_telp': form.get('no_telp'),
                 'jenis': form.get('jenis'),
                 'kecamatan': form.get('kecamatan'),
                 'kelurahan': form.get('kelurahan'),
-                'email': form.get('email'),
             }
             responseInsitution = requests.get(URL+INSTITUTION_PORT+'/institution/name/'+form.get('nama'), data=json.dumps(institutionData), headers={
                 'app-origins': "yes",
@@ -299,56 +310,56 @@ async def register(request: Request):
                     return {'message': 'error occured on update institution', 'status': 'error'}
                 else:
                     print('success updating institution')
-                    print(institutionData.get('jenis'))
-                    if (institutionData.get('jenis') == '4'):
-                        facultyId = None
-                        majorId = None
-                        faculty = requests.get(URL+INSTITUTION_PORT+'/institution/faculty/'+str(user_id)+'/'+form.get('nama_fakultas'),   headers={
-                            'app-origins': "yes",
-                            'content-type': 'application/json'
-                        })
-                        facultyValue = json.loads(faculty.text)
-                        if facultyValue.get('statusCode') == 400:
-                            facultyData = {
-                                'nama_fakultas': form.get('nama_fakultas'),
-                                'id_institusi': user_id
-                            }
-                            newFaculty = requests.post(URL+INSTITUTION_PORT+'/institution/faculty', data=json.dumps(facultyData), headers={
-                                'app-origins': "yes",
-                                'content-type': 'application/json'
-                            })
-                            facultyValue = json.loads(
-                                newFaculty.text)
-                            print(facultyValue)
+                    # print(institutionData.get('jenis'))
+                    # if (institutionData.get('jenis') == '4'):
+                    #     facultyId = None
+                    #     majorId = None
+                    #     faculty = requests.get(URL+INSTITUTION_PORT+'/institution/faculty/'+str(user_id)+'/'+form.get('nama_fakultas'),   headers={
+                    #         'app-origins': "yes",
+                    #         'content-type': 'application/json'
+                    #     })
+                    #     facultyValue = json.loads(faculty.text)
+                    #     if facultyValue.get('statusCode') == 400:
+                    #         facultyData = {
+                    #             'nama_fakultas': form.get('nama_fakultas'),
+                    #             'id_institusi': user_id
+                    #         }
+                    #         newFaculty = requests.post(URL+INSTITUTION_PORT+'/institution/faculty', data=json.dumps(facultyData), headers={
+                    #             'app-origins': "yes",
+                    #             'content-type': 'application/json'
+                    #         })
+                    #         facultyValue = json.loads(
+                    #             newFaculty.text)
+                    #         print(facultyValue)
 
-                            facultyId = facultyValue.get('data')[
-                                0].get('id')
-                        else:
-                            facultyId = facultyValue.get('data')[
-                                0].get('id')
-                        major = requests.get(URL+INSTITUTION_PORT+'/institution/faculty/major/'+str(user_id)+'/'+str(facultyId)+'/'+form.get('nama_prodi'),   headers={
-                            'app-origins': "yes",
-                            'content-type': 'application/json'
-                        })
-                        majorValue = json.loads(major.text)
-                        if majorValue.get('statusCode') == 400:
-                            majorData = {
-                                'id_institusi': user_id,
-                                'id_fakultas': facultyId,
-                                'nama_prodi': form.get('nama_prodi'),
-                            }
-                            newmajor = requests.post(URL+INSTITUTION_PORT+'/institution/faculty/major', data=json.dumps(majorData), headers={
-                                'app-origins': "yes",
-                                'content-type': 'application/json'
-                            })
-                            majorValue = json.loads(newmajor.text)
-                            print(majorValue)
-                            print(
-                                '=============================================================')
-                            if majorValue.get('statusCode') == 400:
-                                return {'message': 'error occured on create major', 'status': 'error'}
-                        else:
-                            print('major found, no need to add')
+                    #         facultyId = facultyValue.get('data')[
+                    #             0].get('id')
+                    #     else:
+                    #         facultyId = facultyValue.get('data')[
+                    #             0].get('id')
+                    #     major = requests.get(URL+INSTITUTION_PORT+'/institution/faculty/major/'+str(user_id)+'/'+str(facultyId)+'/'+form.get('nama_prodi'),   headers={
+                    #         'app-origins': "yes",
+                    #         'content-type': 'application/json'
+                    #     })
+                    #     majorValue = json.loads(major.text)
+                    #     if majorValue.get('statusCode') == 400:
+                    #         majorData = {
+                    #             'id_institusi': user_id,
+                    #             'id_fakultas': facultyId,
+                    #             'nama_prodi': form.get('nama_prodi'),
+                    #         }
+                    #         newmajor = requests.post(URL+INSTITUTION_PORT+'/institution/faculty/major', data=json.dumps(majorData), headers={
+                    #             'app-origins': "yes",
+                    #             'content-type': 'application/json'
+                    #         })
+                    #         majorValue = json.loads(newmajor.text)
+                    #         print(majorValue)
+                    #         print(
+                    #             '=============================================================')
+                    #         if majorValue.get('statusCode') == 400:
+                    #             return {'message': 'error occured on create major', 'status': 'error'}
+                    #     else:
+                    #         print('major found, no need to add')
 
             responseUpdateUser = requests.put(URL+PORT+'/auth/update-user', data=json.dumps(formData), headers={
                 'app-origins': "yes",
@@ -367,7 +378,6 @@ async def register(request: Request):
                 'kab_kota': form['kab_kota'],
                 'kecamatan': form['kecamatan'],
                 'kelurahan': form['kelurahan'],
-                'no_telp': form['no_telp'],
             }
             responseConsumer = requests.get(URL+CONSUMER_PORT+'/consumer/name/'+form.get('nama'), data=json.dumps(consumerData), headers={
                 'app-origins': "yes",
@@ -392,14 +402,14 @@ async def register(request: Request):
             responseUpdateUserValue = json.loads(responseUpdateUser.text)
             if responseUpdateUserValue.get('statusCode') == 400:
                 return {'message': 'error occured on update user', 'status': 'error'}
-    return {'data': json.loads(response.text), 'status': 'ok'}
+    return {'data': json.loads(response.text), 'status': 'ok', 'userId': formData.get('user_id')}
     # except:
     #     print('something went wrong')
 
 
 @ router.post('/login', name='userLogin')
 async def userLogin(request: Request):
-    form = await request.form()
+    form = await request.json()
     formData = {
         'username': form.get('username'),
         'password': form.get('password'),

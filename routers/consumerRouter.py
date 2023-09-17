@@ -47,7 +47,7 @@ def getAlumni(consumer_id: str):
 
 @router.post('/', name='Post Consumer')
 async def newConsumer(request: Request):
-    form = await request.form()
+    form = await request.json()
     formdata = {
         'jenis': form['jenis'],
         'nama': form['nama'],
@@ -70,7 +70,7 @@ async def newConsumer(request: Request):
 
 @router.put('/{id}', name='update Consumer', summary='update Consumer data')
 async def updateConsumer(id: str, request: Request):
-    form = await request.form()
+    form = await request.json()
     formdata = {
         'jenis': form['jenis'],
         'nama': form['nama'],
