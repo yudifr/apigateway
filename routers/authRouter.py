@@ -13,6 +13,7 @@ CONSUMER_PORT = '8003'
 
 @router.post('/logout', name="Logout")
 async def logout(request: Request):
+    # https://stackoverflow.com/questions/64139023/how-to-set-cookies-with-fastapi-for-cross-origin-requests/71131572#71131572
     form = await request.json()
     formData = {
         'username': form.get('username'),
@@ -29,7 +30,7 @@ async def ping(request: Request):
     form = await request.json()
     formData = {
         'username': form.get('username'),
-        'cache': form.get('cache'),
+        'cache_key': form.get('cache_key'),
     }
     response = requests.post(URL+PORT+'/auth/current-user/', data=json.dumps(formData), headers={
         'app-origins': "yes",
@@ -413,6 +414,7 @@ async def userLogin(request: Request):
     formData = {
         'username': form.get('username'),
         'password': form.get('password'),
+        'cache_key': form.get('cache_key')
     }
     response = requests.post(URL+PORT+'/auth/login', data=json.dumps(formData), headers={
         'app-origins': "yes",
