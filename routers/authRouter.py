@@ -25,14 +25,13 @@ async def logout(request: Request):
     return response.json()
 
 
-@router.post('/ping', name="ping")
+@router.post('/user-data', name="user-data")
 async def ping(request: Request):
     form = await request.json()
     formData = {
         'username': form.get('username'),
-        'cache_key': form.get('cache_key'),
     }
-    response = requests.post(URL+PORT+'/auth/current-user/', data=json.dumps(formData), headers={
+    response = requests.post(URL+PORT+'/auth/user-data/', data=json.dumps(formData), headers={
         'app-origins': "yes",
         'Content-Type': 'application/json'
     })
@@ -245,7 +244,10 @@ async def register(request: Request):
             responseAlumniUserValue = json.loads(responseAlumniUser.text)
             if responseAlumniUserValue.get('statusCode') == 400:
                 print(responseAlumniUserValue, '154')
-                return {'message': 'error occured on create alumniData', 'status': 'error'}
+                raise HTTPException(
+                    status_code=400,
+                    detail="error occured on create alumniData",
+                )
             else:
                 user_id = responseAlumniUserValue.get('data')[0]
                 formData['user_id'] = user_id.get('id')
@@ -271,7 +273,10 @@ async def register(request: Request):
                     responseUpdateUser.text)
                 print(responseUpdateUserValue)
                 if responseUpdateUserValue.get('statusCode') == 400:
-                    return {'message': 'error occured on update user', 'status': 'error'}
+                    raise HTTPException(
+                        status_code=400,
+                        detail="error occured on update user",
+                    )
         # institution tested
         if form.get('type') == '2':
             institutionData = {
@@ -308,7 +313,10 @@ async def register(request: Request):
                 updateInstitutionValue = json.loads(updateInstitution.text)
                 print(updateInstitutionValue)
                 if updateInstitutionValue.get('statusCode') == 400:
-                    return {'message': 'error occured on update institution', 'status': 'error'}
+                    raise HTTPException(
+                        status_code=400,
+                        detail="error occured on update institution",
+                    )
                 else:
                     print('success updating institution')
                     # print(institutionData.get('jenis'))
@@ -369,7 +377,10 @@ async def register(request: Request):
             responseUpdateUserValue = json.loads(responseUpdateUser.text)
             print(responseUpdateUserValue, '197')
             if responseUpdateUserValue.get('statusCode') == 400:
-                return {'message': 'error occured on update user', 'status': 'error'}
+                raise HTTPException(
+                    status_code=400,
+                    detail="error occured on update user",
+                )
         if form.get('type') == '3':
             consumerData = {
                 'jenis': form['jenis'],
@@ -402,7 +413,10 @@ async def register(request: Request):
             })
             responseUpdateUserValue = json.loads(responseUpdateUser.text)
             if responseUpdateUserValue.get('statusCode') == 400:
-                return {'message': 'error occured on update user', 'status': 'error'}
+                raise HTTPException(
+                    status_code=400,
+                    detail="error occured on update user",
+                )
     return {'data': json.loads(response.text), 'status': 'ok', 'userId': formData.get('user_id')}
     # except:
     #     print('something went wrong')
@@ -424,6 +438,9 @@ async def userLogin(request: Request):
         responseValue = json.loads(response.text)
         print(responseValue)
         if responseValue.get('statusCode') == 400:
-            return {'message': 'user is not available', 'status': 'error'}
+            raise HTTPException(
+                status_code=400,
+                detail="Username/ Password is wrong",
+            )
         else:
             return {'data': responseValue, 'status': 'ok'}

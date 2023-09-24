@@ -27,6 +27,16 @@ def getAlumni(id: str):
     return {'data': response.json()}
 
 
+@router.get('/riwayat/{id}', name="Get riwayat by id", summary="showing  riwayat by id", description="showing  riwayat data by id")
+def getWorkHistory(id: str):
+    response = requests.get(URL+PORT+'/alumni/riwayat/history/'+id, headers={
+        'app-origins': "yes",
+        'Content-Type': 'application/json',
+    })
+    print(response)
+    return {'data': response.json()}
+
+
 @router.post('/riwayat', name="Post new work history")
 async def postWorkHistory(request: Request):
     form = await request.json()
