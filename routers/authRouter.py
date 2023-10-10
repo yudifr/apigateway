@@ -51,7 +51,7 @@ async def register(request: Request):
         'type': form.get('type'),
     }
     print(form)
-    response = requests.post(URL+PORT+'/auth/register', data=json.dumps(formData), headers={
+    response = requests.post(URL+PORT+'/auth/register/check-user', data=json.dumps(formData), headers={
         'app-origins': "yes",
         'content-type': 'application/json'
     })
@@ -265,7 +265,7 @@ async def register(request: Request):
                     })
                     id_pt = json.loads(newPt.text).get('data')[0]
                     print(id_pt.get('id'))
-                responseUpdateUser = requests.put(URL+PORT+'/auth/update-user', data=json.dumps(formData), headers={
+                responseUpdateUser = requests.post(URL+PORT+'/auth/register', data=json.dumps(formData), headers={
                     'app-origins': "yes",
                     'content-type': 'application/json'
                 })
@@ -370,7 +370,7 @@ async def register(request: Request):
                     #     else:
                     #         print('major found, no need to add')
 
-            responseUpdateUser = requests.put(URL+PORT+'/auth/update-user', data=json.dumps(formData), headers={
+            responseUpdateUser = requests.post(URL+PORT+'/auth/register', data=json.dumps(formData), headers={
                 'app-origins': "yes",
                 'content-type': 'application/json'
             })
@@ -407,7 +407,7 @@ async def register(request: Request):
                 user_id = responseConsumerValue.get('data')[0]
                 formData['user_id'] = user_id.get('id')
 
-            responseUpdateUser = requests.put(URL+PORT+'/auth/update-user', data=json.dumps(formData), headers={
+            responseUpdateUser = requests.post(URL+PORT+'/auth/register', data=json.dumps(formData), headers={
                 'app-origins': "yes",
                 'content-type': 'application/json'
             })
