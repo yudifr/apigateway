@@ -96,8 +96,8 @@ def getConsumerKuisionerByInstitution(institutionId: str, institutionType: str):
             'Content-Type': 'application/json',
         })
         consumerData = consumer.json()
-        print(consumerData)
         consData = consumerData.get('data')
+        print(consData)
         if len(consData) > 0:
             consumerKuisionerPayload = {
                 'id_consumer': consData

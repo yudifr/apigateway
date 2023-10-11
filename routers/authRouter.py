@@ -38,6 +38,19 @@ async def ping(request: Request):
     return response.json()
 
 
+@router.post('/alumni-user-data', name="alumni-user-data")
+async def ping(request: Request):
+    form = await request.json()
+    formData = {
+        'ids': form.get('ids'),
+    }
+    response = requests.post(URL+PORT+'/auth/alumni-user-data/', data=json.dumps(formData), headers={
+        'app-origins': "yes",
+        'Content-Type': 'application/json'
+    })
+    return response.json()
+
+
 @router.post('/register', name='Register')
 async def register(request: Request):
     # try:

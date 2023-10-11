@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, Request
+from fastapi import FastAPI, APIRouter, Request, HTTPException
 
 import requests
 
@@ -6,6 +6,7 @@ import json
 router = APIRouter()
 PORT = '8001'
 URL = 'http://localhost:'
+ALUMNI_PORT = '8002'
 
 
 @router.get('/', name="Get Institution")
@@ -97,6 +98,22 @@ async def getUnivOfAlumni(request: Request):
     return json.loads(response.text)
 
 
+@router.post('/university/get-alumnus-data', name='get univ of alumni')
+async def getUnivOfAlumni(request: Request):
+    form = await request.json()
+    formdata = {
+        'ids': form.get('ids'),
+    }
+
+    response = requests.post(URL+PORT+'/institution/university/get-alumnus-data', data=json.dumps(formdata), headers={
+        'app-origins': "yes",
+        'content-type': 'application/json'
+    }
+
+    )
+    return response.json()
+
+
 @router.post('/', name='Post Faculty')
 async def newFaculty(request: Request):
     form = await request.json()
@@ -165,3 +182,39 @@ async def deleteInstitution(id: str, request: Request):
         'Content-Type': 'application/json',
     })
     return {'message': json.loads(response.text)}
+
+
+@router.get('/list-alumni/{institutionId}/{institutionType}', name="Get consumer Kuisioner By Institution")
+def getConsumerKuisionerByInstitution(institutionId: str, institutionType: str):
+    institutionData = {
+        'institution_id': institutionId,
+        'institution_type': institutionType
+
+    }
+    urlToGetIds = URL+ALUMNI_PORT+'/alumni/getworkerdata'
+    if institutionType == '4':
+        urlToGetIds = URL+PORT+'/institution/kuisioner/alumni'
+    print(urlToGetIds, 'ffffffffffffffff')
+    response = requests.post(urlToGetIds, data=json.dumps(institutionData), headers={
+        'app-origins': 'yes',
+        'Content-Type': 'application/json',
+    })
+    responseData = response.json()
+    alumniFromInstitutionData = responseData.get('data')
+    print(alumniFromInstitutionData)
+    if len(alumniFromInstitutionData) > 0:
+        idsfff = {
+            'ids': alumniFromInstitutionData
+        }
+        print(alumniFromInstitutionData)
+        alumni = requests.post(URL+ALUMNI_PORT+'/alumni/get-alumni-data', data=json.dumps(idsfff), headers={
+            'app-origins': 'yes',
+            'Content-Type': 'application/json',
+        })
+        alumniData = alumni.json()
+        return alumniData
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="No Alumni Available",
+        )
