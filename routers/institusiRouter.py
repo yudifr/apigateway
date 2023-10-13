@@ -7,6 +7,7 @@ router = APIRouter()
 PORT = '8001'
 URL = 'http://localhost:'
 ALUMNI_PORT = '8002'
+CONSUMER_PORT = '8003'
 
 
 @router.get('/', name="Get Institution")
@@ -217,4 +218,51 @@ def getConsumerKuisionerByInstitution(institutionId: str, institutionType: str):
         raise HTTPException(
             status_code=400,
             detail="No Alumni Available",
+        )
+
+
+@router.get('/list-consumer/{institutionId}/{institutionType}', name="Get consumer Kuisioner By Institution")
+def getConsumerKuisionerByInstitution(institutionId: str, institutionType: str):
+    consumerDataQueries = {
+        'institution_id': institutionId,
+        'institution_type': institutionType
+
+    }
+    urlToGetIds = URL+ALUMNI_PORT+'/alumni/getworkerdata'
+    if institutionType == '4':
+        urlToGetIds = URL+PORT+'/institution/kuisioner/alumni'
+    print(urlToGetIds, 'ffffffffffffffff')
+    response = requests.post(urlToGetIds, data=json.dumps(consumerDataQueries), headers={
+        'app-origins': 'yes',
+        'Content-Type': 'application/json',
+    })
+    responseData = response.json()
+    consumerFromInstitutionData = responseData.get('data')
+    print(consumerFromInstitutionData, 'alumni of this bleh')
+    if len(consumerFromInstitutionData) > 0:
+        idsfff = {
+            'ids': consumerFromInstitutionData
+        }
+        consumer = requests.post(URL+ALUMNI_PORT+'/alumni/get-consumer-id-with-alumni', data=json.dumps(idsfff), headers={
+            'app-origins': 'yes',
+            'Content-Type': 'application/json',
+        })
+        consumerData = consumer.json()
+        consData = consumerData.get('data')
+        print(consData, 'consData')
+        formData = {
+            'ids': consData,
+        }
+        responseConsumer = requests.post(URL+CONSUMER_PORT+'/consumer/get-multiple-consumer/', data=json.dumps(formData), headers={
+            'app-origins': "yes",
+            'Content-Type': 'application/json'
+        })
+        print(responseConsumer)
+
+        responseConsumerData = responseConsumer.json()
+        return {'data': responseConsumerData, 'alumniData': consumerData}
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="No Kuisioner Available Yet",
         )
