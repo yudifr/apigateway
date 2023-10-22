@@ -170,7 +170,8 @@ async def register(request: Request):
                     toReturnIdPt = {
                         'id_pt': '',
                         'id_faculty': '',
-                        'id_major': ''
+                        'id_major': '',
+                        'tahun': item.get('tahun')
                     }
                     print(item.get('nama_universitas'))
                     responseAlumniPt = requests.get(URL+INSTITUTION_PORT+'/institution/name/'+item.get('nama_universitas'),   headers={
@@ -271,7 +272,8 @@ async def register(request: Request):
                         'id_alumni': user_id.get('id'),
                         'id_pt': item.get('id_pt'),
                         'id_fakultas': item.get('id_faculty'),
-                        'id_prodi': item.get('id_major')
+                        'id_prodi': item.get('id_major'),
+                        'tahun': item.get('tahun')
                     }
                     newPt = requests.post(URL+INSTITUTION_PORT+'/institution/university', data=json.dumps(alumniUniversityData), headers={
                         'app-origins': "yes",

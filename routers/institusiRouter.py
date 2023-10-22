@@ -115,6 +115,22 @@ async def getUnivOfAlumni(request: Request):
     return response.json()
 
 
+@router.post('/university/remove-alumni', name='get univ of alumni')
+async def getUnivOfAlumni(request: Request):
+    form = await request.json()
+    formdata = {
+        'id_alumni': form.get('id_alumni'),
+    }
+
+    response = requests.post(URL+PORT+'/institution/university/remove-alumni', data=json.dumps(formdata), headers={
+        'app-origins': "yes",
+        'content-type': 'application/json'
+    }
+
+    )
+    return response.json()
+
+
 @router.post('/', name='Post Faculty')
 async def newFaculty(request: Request):
     form = await request.json()
